@@ -60,6 +60,7 @@ mod handshake;
     feature = "tokio-rustls-platform-verifier",
     feature = "tokio-rustls-webpki-roots",
     feature = "tokio-openssl",
+    feature = "asupersync-tls",
 ))]
 pub mod stream;
 
@@ -93,6 +94,8 @@ use tungstenite::{
 pub mod async_std;
 #[cfg(feature = "async-tls")]
 pub mod async_tls;
+#[cfg(feature = "asupersync-runtime")]
+pub mod asupersync;
 #[cfg(feature = "gio-runtime")]
 pub mod gio;
 #[cfg(feature = "smol-runtime")]
@@ -756,6 +759,7 @@ impl<S> Shared<S> {
     feature = "async-std-runtime",
     feature = "smol-runtime",
     feature = "tokio-runtime",
+    feature = "asupersync-runtime",
     feature = "gio-runtime"
 ))]
 /// Get a domain from an URL.
@@ -789,6 +793,7 @@ pub(crate) fn domain(
     feature = "async-std-runtime",
     feature = "smol-runtime",
     feature = "tokio-runtime",
+    feature = "asupersync-runtime",
     feature = "gio-runtime"
 ))]
 /// Get the port from an URL.

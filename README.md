@@ -1,7 +1,8 @@
 # async-tungstenite
 
 Asynchronous WebSockets for [async-std](https://async.rs),
-[tokio](https://tokio.rs), [gio](https://gtk-rs.org) and any `std`
+[tokio](https://tokio.rs), [gio](https://gtk-rs.org),
+[asupersync](https://github.com/Dicklesworthstone/asupersync) and any `std`
 `Future`s runtime.
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
@@ -41,6 +42,14 @@ integration with various other crates can be enabled via feature flags
    [async-native-tls](https://crates.io/crates/async-native-tls).
  * `tokio-runtime`: Enables the `tokio` module, which provides integration
    with the [tokio](https://tokio.rs) runtime.
+ * `asupersync-runtime`: Enables the `asupersync` module, which provides 
+   integration with the [asupersync](https://github.com/Dicklesworthstone/asupersync) 
+   runtime. Note: asupersync requires nightly Rust and uses structured 
+   concurrency patterns.
+ * `asupersync-tls-native-roots`: Enables TLS support for asupersync using 
+   native system root certificates via rustls.
+ * `asupersync-tls-webpki-roots`: Enables TLS support for asupersync using 
+   Mozilla's root certificates via rustls.
  * `tokio-native-tls`: Enables the additional functions in the `tokio` module to
    implement TLS via [tokio-native-tls](https://crates.io/crates/tokio-native-tls).
  * `tokio-rustls-native-certs`: Enables the additional functions in the `tokio` 

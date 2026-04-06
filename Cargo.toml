@@ -22,6 +22,10 @@ async-std-runtime = ["async-std", "handshake"]
 smol-runtime = ["async-net", "handshake"]
 smol-native-tls = ["real-async-native-tls", "tungstenite/native-tls"]
 tokio-runtime = ["tokio", "handshake"]
+asupersync-runtime = ["asupersync", "handshake"]
+asupersync-tls = ["asupersync-runtime", "asupersync/tls"]
+asupersync-tls-native-roots = ["asupersync-tls", "asupersync/tls-native-roots"]
+asupersync-tls-webpki-roots = ["asupersync-tls", "asupersync/tls-webpki-roots"]
 gio-runtime = ["gio", "glib", "handshake"]
 async-tls = ["real-async-tls", "handshake"]
 async-native-tls = ["async-std-runtime", "real-async-native-tls", "tungstenite/native-tls"]
@@ -37,7 +41,7 @@ url = ["tungstenite/url"]
 __rustls-tls = ["tokio-runtime", "real-tokio-rustls", "rustls-pki-types", "tungstenite/__rustls-tls"]
 
 [package.metadata.docs.rs]
-features = ["async-std-runtime", "smol-runtime", "tokio-runtime", "gio-runtime", "async-tls", "async-native-tls", "tokio-native-tls"]
+features = ["async-std-runtime", "smol-runtime", "tokio-runtime", "asupersync-runtime", "asupersync-tls-webpki-roots", "gio-runtime", "async-tls", "async-native-tls", "tokio-native-tls"]
 
 [dependencies]
 log = "0.4"
@@ -96,6 +100,10 @@ optional = true
 version = "1.0"
 features = ["net"]
 default-features = false
+
+[dependencies.asupersync]
+optional = true
+git = "https://github.com/Dicklesworthstone/asupersync"
 
 [dependencies.real-tokio-native-tls]
 optional = true
@@ -207,6 +215,10 @@ required-features = ["tokio-runtime"]
 [[example]]
 name = "tokio-echo"
 required-features = ["tokio-runtime"]
+
+[[example]]
+name = "asupersync-echo"
+required-features = ["asupersync-runtime"]
 
 [[example]]
 name = "server-custom-accept"

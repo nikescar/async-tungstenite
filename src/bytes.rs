@@ -188,6 +188,34 @@ where
     }
 }
 
+#[cfg(feature = "asupersync-runtime")]
+impl<S> asupersync::io::AsyncWrite for ByteWriter<S>
+where
+    S: Sender + Unpin,
+{
+    fn poll_write(
+        mut self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+        buf: &[u8],
+    ) -> Poll<io::Result<usize>> {
+        <S as private::SealedSender>::poll_write(Pin::new(&mut self.sender), cx, buf)
+            .map_err(convert_err)
+    }
+
+    fn poll_flush(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
+        <S as private::SealedSender>::poll_flush(Pin::new(&mut self.sender), cx)
+            .map_err(convert_err)
+    }
+
+    fn poll_shutdown(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
+        let me = self.get_mut();
+        let msg = me.state.close();
+        <S as private::SealedSender>::poll_close(Pin::new(&mut me.sender), cx, msg)
+            .map_err(convert_err)
+    }
+}
+
+
 /// Treat a websocket [stream](Stream) as an `AsyncRead` implementation.
 ///
 /// This also works with any other `Stream` of `Message`, such as a `SplitStream`.
@@ -269,6 +297,24 @@ where
         self: Pin<&mut Self>,
         cx: &mut Context<'_>,
         buf: &mut tokio::io::ReadBuf,
+    ) -> Poll<io::Result<()>> {
+        poll_read_helper(self, cx, buf.remaining()).map_ok(|bytes| {
+            if let Some(ref bytes) = bytes {
+                buf.put_slice(bytes);
+            }
+        })
+    }
+}
+
+#[cfg(feature = "asupersync-runtime")]
+impl<S> asupersync::io::AsyncRead for ByteReader<S>
+where
+    S: Stream<Item = Result<Message, WsError>> + Unpin,
+{
+    fn poll_read(
+        self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+        buf: &mut asupersync::io::ReadBuf,
     ) -> Poll<io::Result<()>> {
         poll_read_helper(self, cx, buf.remaining()).map_ok(|bytes| {
             if let Some(ref bytes) = bytes {
